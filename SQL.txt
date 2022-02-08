@@ -1,0 +1,133 @@
+DATABASENAME : engene
+USERNAME : eng
+PASSWORD : eng
+
+
+******************************************************************************************************
+
+CREATE TABLE ADMIN(
+    AD_ID INT PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
+    AD_NAME VARCHAR(255),
+    AD_EMAIL VARCHAR(255),
+    AD_PASS VARCHAR(255)
+);
+
+INSERT INTO ADMIN ( AD_NAME, AD_EMAIL, AD_PASS)
+VALUES ('elly', 'ellya@gmail.com', '1234'),
+('zahirah', 'zahirah@gmail.com', '1234'),
+('syadiba', 'syadiba@gmail.com', '1234');
+******************************************************************************************************
+
+CREATE TABLE APPLICANT(
+    AP_ID INT PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
+    AP_NAME VARCHAR(255),
+    AP_DOB VARCHAR(255),
+    AP_PHNUM VARCHAR(255),
+    AP_EMAIL VARCHAR(255),
+    AP_PASS VARCHAR(255),
+    AP_AB VARCHAR(255),
+    AP_EB VARCHAR(255)
+);
+
+INSERT INTO APPLICANT ( AP_NAME, AP_DOB, AP_PHNUM,AP_EMAIL,AP_PASS,AP_AB,AP_EB)
+VALUES
+('Tom Holland', '9/10/1990', '019-7378675','tom@gmail.com','app123','PhD MA BA Trinity College, University of Cambridge, England Digital Signal Processing
+Electrical and Information Science','Electrical Engineering Researcher, STEM Contribution'),
+('Chris Jones', '24/2/1984', '012-2392945','chris@gmail.com','app123','Doctorate in Political Science,Economics and Business Administration at Priceston University','Participated as a team member in a professional, volunteer, or academic setting with Mozambican colleagues in the day-to-day 
+activities of a team.'),
+('SkyJennie', '6/8/1996', '011-2827462','jennie@gmail.com','app123','MASSCOMM UiTM Shah Alam','Masters in VideoGrapher, Musical Composer, currently experience as content creator')
+;
+
+******************************************************************************************************
+
+CREATE TABLE FORUM(
+    FORUM_ID INT PRIMARY KEY,
+    FORUM_MESSAGE VARCHAR(255),
+    AP_ID INTEGER
+);
+
+ALTER TABLE FORUM
+ADD FOREIGN KEY(AP_ID)
+REFERENCES APPLICANT(AP_ID);
+
+******************************************************************************************************
+
+CREATE TABLE FORUM_COMMENT(
+    FC_ID INT PRIMARY KEY,
+    FC_MESSAGE VARCHAR(255),
+    FORUM_ID INTEGER,
+    AP_ID INTEGER
+);
+
+ALTER TABLE FORUM_COMMENT
+ADD FOREIGN KEY(AP_ID)
+REFERENCES APPLICANT(AP_ID);
+
+ALTER TABLE FORUM_COMMENT
+ADD FOREIGN KEY(FORUM_ID)
+REFERENCES FORUM(FORUM_ID);
+
+******************************************************************************************************
+
+CREATE TABLE JOB(
+    JOB_ID INT PRIMARY KEY,
+    JOB_NAME VARCHAR(255),
+    JOB_DESC VARCHAR(255),
+    JOB_PRICING NUMERIC(8,2) NOT NULL
+);
+
+
+INSERT INTO JOB (JOB_NAME,JOB_DESC,JOB_PRICING)
+VALUES 
+('Software Development','Java? C++? Python? Whatever your software programming favourite, Apply here.','2000'),
+('Game Development','Game on! Create & customize a captivating digital game that gamers will love.','2000'),
+('Web Programmings','Add features to your website with custom web applications and extensions.','1800'),
+('Mobile App','Go mobile with custom apps, site-to-app conversions, bug fixes, and more.','2000'),
+('VFX/Graphic','This is where the magic happens, anything from rotoscoping to digital compositing! We got you covered. This is VFX.','900'),
+('3D Animator','Show your skills and explain your product or model in a detailed 3D animated video.','900'),
+('Video Editing','Create or improve your videos skills with compelling editing and post-production.','800'),
+('Photoshop Editing','Get your visuals perfected, from portraits to products. Apply for more experience!','400'),
+('Logo Design','Stand out from the crowd with a logo that fits organization brand personality.','250'),
+('UX Design','Give your client a smooth online experience with a solid UX design.','250');
+
+******************************************************************************************************
+
+CREATE TABLE APPLICATION(
+    APP_ID INT PRIMARY KEY,
+    AD_ID INTEGER DEFAULT 5,
+    AP_ID INTEGER,
+    JOB_ID INTEGER,
+    APP_STATUS VARCHAR(255) DEFAULT 'PENDING'
+);
+
+
+ALTER TABLE APPLICATION
+ADD FOREIGN KEY(JOB_ID)
+REFERENCES JOB(JOB_ID);
+
+
+ALTER TABLE APPLICATION
+ADD FOREIGN KEY(AD_ID)
+REFERENCES ADMIN(AD_ID);
+
+
+ALTER TABLE APPLICATION
+ADD FOREIGN KEY(AP_ID)
+REFERENCES APPLICANT(AP_ID);
+
+INSERT INTO APPLICATION (AD_ID, AP_ID, JOB_ID)
+VALUES (5, 1, 3),
+(6, 2, 3),
+(7, 2, 1);
+
+******************************************************************************************************
+
+
+SELECT ADMIN.AD_ID,APPLICANT.AP_ID,JOB.JOB_ID,JOB.JOB_NAME,JOB.JOB_DESC,JOB.JOB_PRICING
+            FROM APPLICATION
+            JOIN ADMIN
+            ON APPLICATION.AD_ID = ADMIN.AD_ID
+            JOIN APPLICANT
+            ON APPLICANT.AP_ID = APPLICATION.AP_ID
+            JOIN JOB
+            ON JOB.JOB_ID = APPLICATION.JOB_ID
